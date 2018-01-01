@@ -38,6 +38,15 @@
                                   开始
                                   <b class="caret"></b>
                               </a>
+                              {% if current_user.is_authenticated %}
+                              <ul class="dropdown-menu">
+                                  <li><a href="{{ url_for('user.register') }}">个人中心</a></li>
+                                  <li><a href="#">找回密码</a></li>
+                                  <li class="divider"></li>
+                                  <li><a href="{{ url_for('user.logout') }}">退出</a></li>
+                                  <li><a href="#">设置</a></li>
+                              </ul>
+                              {% else %}
                               <ul class="dropdown-menu">
                                   <li><a href="{{ url_for('user.register') }}">注册</a></li>
                                   <li><a href="#">找回密码</a></li>
@@ -45,6 +54,7 @@
                                   <li><a href="{{ url_for('user.login') }}">登录</a></li>
                                   <li><a href="#">设置</a></li>
                               </ul>
+                              {% endif %}
                           </li>
                         </ul>
                     </div>
@@ -70,6 +80,16 @@
             </div><!--end nav container-->
         </nav>
         {% block body %}
+        <div class="container">
+            {% for message in get_flashed_messages() %}
+            <div class="alert alert-warning">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ message }}
+            </div>
+            {% endfor %}
+
+            {% block page_content %}{% endblock %}
+        </div>        
         {% block leftnav %}
         <div class="right-navbar col-lg-2 col-lg-offset-2 col-xs-4">   
             <ul class="nav nav-pills nav-stacked" style="padding-top: 20px;">
