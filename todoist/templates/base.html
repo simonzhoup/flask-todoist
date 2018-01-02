@@ -7,10 +7,12 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <!-- 引入 Bootstrap -->
       <link href="{{ url_for('static',filename='css/bootstrap.min.css') }}" rel="stylesheet">
+      <link href="{{ url_for('static',filename='css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet">
       <link href="{{ url_for('static',filename='css/main.css') }}" rel="stylesheet">
       <script src="{{ url_for('static',filename='js/jquery-3.2.1.min.js') }}"></script>       
       <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script> 
       <script src="{{ url_for('static',filename='js/moment-with-locales.js') }}"></script>
+      <script src="{{ url_for('static',filename='js/bootstrap-datetimepicker.min.js') }}"></script>
    </head>
    <body>
         {% block navbar %}
@@ -167,7 +169,8 @@
                             document.getElementById("tasksave").click();
                         }
                         document.getElementById("tasksave").style.display="none";
-                        document.getElementById("timenode").type="date";
+                        // document.getElementById("timenode").type="date";
+                        $("#timenode").datetimepicker({format: 'yyyy-mm-dd hh:ii'});
                         </script>
                         {% endif %}
                     </div>

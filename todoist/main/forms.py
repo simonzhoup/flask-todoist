@@ -12,9 +12,9 @@ class AddProject(FlaskForm):
 class AddTask(FlaskForm):
     task = StringField('任务：', validators=[Required(), Length(1, 64)])
     project = SelectField('项目:')
-    timenode = DateField('时间节点：')
+    timenode = DateTimeField('时间节点：')
     priority = SelectField(
-        '优先级：', choices=[('1', 1), ('2', 2), ('3', 3), ('4', 4)], coerce=int)
+        '优先级：', choices=[('1', '1'), ('2', '2'), ('3', '3'), ('4', '4')])
     tasksave = SubmitField('保存')
 
     def __init__(self, *args, **kwargs):
