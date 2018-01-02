@@ -1,7 +1,8 @@
 from flask import render_template, redirect, url_for, abort, flash, request, current_app
 from . import user
 from .forms import UserRegister, UserLogin
-from ..models import User
+from ..main.forms import AddProject
+from ..models import User, Project
 from .. import db
 from flask_login import login_user, logout_user, login_required, current_user
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
@@ -32,6 +33,7 @@ def register():
         token = user.generate_confirmation_token()
         send_email(to=user.email, subject='请验证您的邮箱',
                    template='confirm', user=user, token=token)
+        Project.default_project(user)
         flash('注册成功')
         return redirect(url_for('main.index'))
     return render_template('user/register.html', form=form)
@@ -40,15 +42,16 @@ def register():
 @user.route('/login', methods=['GET', 'POST'])
 def login():
     form = UserLogin()
+    projectform = AddProject()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user and user.verify_password(form.password.data):
-            login_user(user, form.remeber_me.data)
+            login_user(user, True)
             flash('登录成功')
             return redirect(request.args.get('next') or url_for('main.index'))
         flash('帐号/密码不正确')
-        return redirect(url_for('main.index'))
-    return render_template('user/login.html', form=form)
+        return redirect(url_for('.login'))
+    return render_template('user/login.html', form=form, projectform=projectform)
 
 
 @user.route('/logout')
@@ -56,7 +59,7 @@ def login():
 def logout():
     logout_user()
     flash('你已登出')
-    return redirect(url_for('main.index'))
+    return redirect(url_for('.login'))
 
 
 @user.route('/confirm/<token>')

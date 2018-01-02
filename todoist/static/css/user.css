@@ -1,0 +1,47 @@
+html, body {
+	height: 100%;
+	background-color: #003333;
+}
+a {
+    color: red;
+}
+a:link {
+    text-decoration: none;
+    color: red;
+}
+a:hover {
+    color: #fff;
+}
+p {
+	color: #fff;
+}
+#register {
+	width: 400px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.checkbox {
+	color: #fff;
+}
+.btn {
+	margin-top: 10px;
+	width: 100%;
+    color: #fff;
+    background-color: red;
+    border-color: red;
+}
+.btn:hover {
+    color: #fff;
+    background-color: #D80000;
+    border-color: #D80000;	
+}
+form {
+	padding-bottom: 30px;
+}
+.container {
+	padding-top: 40px;
+}
+.control-label {
+	color: #fff;
+}

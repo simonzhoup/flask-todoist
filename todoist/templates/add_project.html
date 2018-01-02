@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block right %}
+<div class="form" id="register">
+<h1 class="text-center" style="color: #fff;">添加项目</h1>
+{{ wtf.quick_form(form) }}
+</div>
+{% endblock %}

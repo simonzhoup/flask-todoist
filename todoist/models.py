@@ -1,4 +1,5 @@
 from . import db
+from datetime import datetime
 from flask import current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
@@ -19,6 +20,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(64), unique=True)
     password_hash = db.Column(db.String(128))
     confirmed = db.Column(db.Boolean, default=False)
+    projects = db.relationship('Project', backref='user')
 
     @property
     def password(self):
@@ -46,3 +48,29 @@ class User(UserMixin, db.Model):
         self.confirmed = True
         db.session.add(self)
         return True
+
+
+class Project(db.Model):
+    __tablename__ = 'projects'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    name = db.Column(db.String(64), index=True)
+    icon = db.Column(db.String(64), default='file')
+    tasks = db.relationship('Task', backref='project_task')
+
+    def default_project(user):
+        projects = [['个人', 'user'], ['工作', 'paperclip'], [
+            '购物', 'shopping-cart'], ['饮食', 'cutlery'], ['杂项', 'certificate']]
+        for p in projects:
+            project = Project(name=p[0], user_id=user.id, icon=p[1])
+            db.session.add(project)
+
+
+class Task(db.Model):
+    __tablename__ = 'tasks'
+    id = db.Column(db.Integer, primary_key=True)
+    task = db.Column(db.String(64), index=True)
+    timestamp = db.Column(db.DateTime, default=datetime.now)
+    timenode = db.Column(db.Date, index=True)
+    priority = db.Column(db.Integer, index=True, default=1)
+    project = db.Column(db.String(64), db.ForeignKey('projects.name'))

@@ -1,8 +1,30 @@
-{% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>MyTodoist</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <!-- 引入 Bootstrap -->
+      <link href="{{ url_for('static',filename='css/bootstrap.min.css') }}" rel="stylesheet">
+      <link href="{{ url_for('static',filename='css/user.css') }}" rel="stylesheet">
+      <script src="{{ url_for('static',filename='js/jquery-3.2.1.min.js') }}"></script>       
+      <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script> 
+      <script src="{{ url_for('static',filename='js/moment-with-locales.js') }}"></script>
+   </head>
+
 {% block body %}
 <div class="container" id="register">
-<h1 class="text-center" style="color: #fff;">登录</h1>
+{% for message in get_flashed_messages() %}
+<div class="alert alert-warning">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    {{ message }}
+</div>
+{% endfor %}
+
+<h1 class="text-center"><p>登录</p></h1>
 {{ wtf.quick_form(form) }}
+<p class="text-center">还没有账户？<a href="{{ url_for('user.register') }}">注册一个吧</a></p>
+<p class="text-center"><a href="#">忘记密码?</a></p>
 </div>
 {% endblock %}

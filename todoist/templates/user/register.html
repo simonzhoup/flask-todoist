@@ -1,8 +1,17 @@
-{% extends "base.html" %}
+{% extends "user/login.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% block body %}
+<div class="container" id="register">
+{% for message in get_flashed_messages() %}
+<div class="alert alert-warning">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    {{ message }}
+</div>
+{% endfor %}
+
 <div class="container" id="register">
 <h1 class="text-center" style="color: #fff;">注册</h1>
 {{ wtf.quick_form(form) }}
 </div>
+<p class="text-center">已经注册？ <a href="{{ url_for('user.login') }}">跳转至登录</a></p>
 {% endblock %}

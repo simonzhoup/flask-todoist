@@ -20,9 +20,17 @@ p {
 	margin-left: auto;
 	margin-right: auto;
 }
-.control-label {
-	color: #fff;
-}
+
 .checkbox {
 	color: #fff;
+}
+input#timenode {
+	width: 30%;
+}
+select#priority {
+	width: 10%;
+}
+
+.list-group-item {
+	/*background-color:rgba(0,51,51,0.2); */
 }

@@ -1,0 +1,24 @@
+{% block right %}
+<h2><p>今天 <small> 
+  <script>
+  var time = moment('{{ today }}').locale('zh-cn').format('dddd MMMDo'); 
+  document.write(time);
+  </script>         
+</small></p></h2>
+
+<ul class="list-group">
+    <li class="list-group-item">免费域名注册</li>
+    <li class="list-group-item">免费 Window 空间托管</li>
+    <li class="list-group-item">图像的数量</li>
+    <li class="list-group-item">
+        <span class="badge">新</span>
+        24*7 支持
+    </li>
+    <li class="list-group-item">每年更新成本</li>
+    <li class="list-group-item">
+        <span class="badge">新</span>
+        折扣优惠
+    </li>
+</ul>
+  
+{% endblock right %}

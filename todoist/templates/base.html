@@ -6,12 +6,14 @@
       <title>MyTodoist</title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <!-- 引入 Bootstrap -->
-      <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+      <link href="{{ url_for('static',filename='css/bootstrap.min.css') }}" rel="stylesheet">
       <link href="{{ url_for('static',filename='css/main.css') }}" rel="stylesheet">
-      <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>       
-      <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+      <script src="{{ url_for('static',filename='js/jquery-3.2.1.min.js') }}"></script>       
+      <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script> 
+      <script src="{{ url_for('static',filename='js/moment-with-locales.js') }}"></script>
    </head>
    <body>
+        {% block navbar %}
         <nav class="navbar navbar-inverse">
             <div class="container col-lg-8 col-lg-offset-2 col-sm-12">
                 <div class="navbar-header">
@@ -27,7 +29,7 @@
 
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li><a href="#"><span class="glyphicon glyphicon-plus"></span></a></li>
+                        <li><a data-toggle="modal" href="#add-task"><span class="glyphicon glyphicon-plus"></span></a></li>
                         <li><a href="#"><span class="glyphicon glyphicon-bell"></span></a></li>
                     </ul>
                     
@@ -40,8 +42,8 @@
                               </a>
                               {% if current_user.is_authenticated %}
                               <ul class="dropdown-menu">
-                                  <li><a href="{{ url_for('user.register') }}">个人中心</a></li>
-                                  <li><a href="#">找回密码</a></li>
+                                  <li><a href="#">个人中心</a></li>
+                                  <li><a href="#">查看活动日志</a></li>
                                   <li class="divider"></li>
                                   <li><a href="{{ url_for('user.logout') }}">退出</a></li>
                                   <li><a href="#">设置</a></li>
@@ -79,7 +81,7 @@
                     </div>
             </div><!--end nav container-->
         </nav>
-        {% block body %}
+        {% endblock %}
         <div class="container">
             {% for message in get_flashed_messages() %}
             <div class="alert alert-warning">
@@ -90,6 +92,7 @@
 
             {% block page_content %}{% endblock %}
         </div>        
+        {% block body %}
         {% block leftnav %}
         <div class="right-navbar col-lg-2 col-lg-offset-2 col-xs-4">   
             <ul class="nav nav-pills nav-stacked" style="padding-top: 20px;">
@@ -102,22 +105,76 @@
                 <li><a href="#">过滤器</a></li>
             </ul>
             <ul class="nav nav-pills nav-stacked" style="padding-top: 5px;">
-            <li><a href="#"><span class="glyphicon glyphicon-user"></span> 个人</a></li>
-            <li><a href="#"><span class="glyphicon glyphicon-paperclip"></span> 工作</a></li>
-            <li><a href="#"><span class="glyphicon glyphicon-shopping-cart"></span> 购物</a></li>
-            <li><a href="#"><span class="glyphicon glyphicon-cutlery"></span> 饮食</a></li>
-            <li><a href="#"><span class="glyphicon glyphicon-asterisk"></span> 杂项</a></li>
+            {% for p in current_user.projects %}
+            <li><a href="#"><span class="glyphicon glyphicon-{{ p.icon }}"> </span> {{ p.name }}</a></li>
+            {% endfor %}
             <li class="divider" style="color: #fff;"></li>
-            <li><a href="#" style="color: red;"><span class="glyphicon glyphicon-plus"></span> 添加项目</a></li>
+            <li><a data-toggle="modal" href="#add-project" style="color: red;"><span class="glyphicon glyphicon-plus"></span> 添加项目</a></li>
             </ul>
         </div>
         {% endblock %}
-        {% block rights %}
-          
-        {% endblock rights %}
+        <div class="right-navbar col-lg-8 col-xs-8">   
+        {% block right %}
+        {% include "today.html" %}
+        {% endblock right %}
+        </div>
         {% endblock %}
 
-        
+        {% block modal %}
+        <!-- 模态框（Modal） -->
+        <div class="modal fade" id="add-project" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">添加项目</h4>
+                    </div>
+                    <div class="modal-body">
+                      {{ wtf.quick_form(projectform) }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        {% if current_user.is_authenticated %}
+                        <button type="submit" class="btn btn-primary" onclick="load()">提交</button>
+                        <script>
+                        function load(){
+                            document.getElementById("submit").click();
+                        }
+                        document.getElementById("submit").style.display="none"
+                        </script>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="add-task" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">添加任务</h4>
+                    </div>
+                    <div class="modal-body">
+                      {{ wtf.quick_form(taskform) }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        {% if current_user.is_authenticated %}
+                        <button type="submit" class="btn btn-primary" onclick="task()">提交</button>
+                        <script>
+                        function task(){
+                            document.getElementById("tasksave").click();
+                        }
+                        document.getElementById("tasksave").style.display="none";
+                        document.getElementById("timenode").type="date";
+                        </script>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
 
    </body>
 </html>
