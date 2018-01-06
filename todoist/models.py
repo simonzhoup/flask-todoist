@@ -21,6 +21,9 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     confirmed = db.Column(db.Boolean, default=False)
     projects = db.relationship('Project', backref='user')
+    tasks = db.relationship('Task', backref='user', lazy='dynamic')
+    logs = db.relationship('UserLog', backref='user')
+    titles = db.relationship('Titles', backref='user')
 
     @property
     def password(self):
@@ -69,8 +72,27 @@ class Project(db.Model):
 class Task(db.Model):
     __tablename__ = 'tasks'
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     task = db.Column(db.String(64), index=True)
     timestamp = db.Column(db.DateTime, default=datetime.now)
-    timenode = db.Column(db.Date, index=True)
+    timenode = db.Column(db.String(64), index=True)
     priority = db.Column(db.Integer, index=True, default=1)
     project = db.Column(db.String(64), db.ForeignKey('projects.name'))
+    filish = db.Column(db.Boolean, default=False)
+    title = db.Column(db.Integer, db.ForeignKey('titles.id'))
+
+
+class Titles(db.Model):
+    __tablename__ = 'titles'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    title = db.Column(db.String(64), index=True)
+    tasks = db.relationship('Task', backref='tasks')
+
+
+class UserLog(db.Model):
+    __tablename__ = 'userlogs'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    log = db.Column(db.String(128))
+    timestamp = db.Column(db.DateTime, default=datetime.now)

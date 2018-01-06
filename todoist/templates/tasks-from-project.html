@@ -1,0 +1,114 @@
+{% extends "base.html" %} {% block right %}
+<div class="ot-tasks">
+    <h3><p style="color: red;">{% if project %}{{ project }}{% elif title %}{{ title }}{% endif %}<small> 未完成任务</small></p></h3>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th style="width: 60%">任务</th>
+                <th style="width: 10%">项目</th>
+                <th style="width: 10%">创建时间</th>
+                <th style="width: 10%">完成？</th>
+                <th style="width: 10%">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ot in tasks %}
+            <tr data-toggle="tooltip" data-placement="top" title="" id="task{{ ot.id }}">
+                <td>
+                    <p>
+                        <script>
+                        document.getElementById('task{{ ot.id }}').title = "时间节点: {{ ot.timenode }}";
+                        </script>
+                        {{ ot.task }}</p>
+                </td>
+                <td>
+                    <a href="#">
+                        <button type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-{{ ot.project_task.icon }}"></span> {{ ot.project }}</button>
+                    </a>
+                </td>
+                <td>
+                    <script>
+                    var timestamp = moment('{{ ot.timestamp }}').locale('zh-cn').fromNow();
+                    document.write(timestamp);
+                    </script>
+                </td>
+                <td>
+                    {% if ot.filish %}
+                    <a href="{{ url_for('main.task_unfilish',id=ot.id) }}">
+                        <button type="button" class="btn btn-success btn-xs"><span class="glyphicon glyphicon-ok"></span></button>
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('main.task_filish',id=ot.id) }}">
+                        <button type="button" class="btn btn-warning btn-xs"><span class="glyphicon glyphicon-remove"></span></button>
+                    </a>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="dropdown">
+                        <a data-toggle="dropdown" href=""><span class="glyphicon glyphicon-edit"></span></a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                            <li><a href="#edit{{ ot.id }}" data-toggle="modal">编辑任务</a></li>
+                            <li><a href="#">删除任务</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            <div class="modal fade" id="edit{{ ot.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel">添加项目</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form role="form" action="{{ url_for('main.edit_task',id=ot.id) }}" method="post">
+                                <div class="form-group">
+                                    <label for="name">名称</label>
+                                    <input type="text" class="form-control" id="task_task{{ ot.id }}" name="task_task{{ ot.id }}" value="{{ ot.task }}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">项目：</label>
+                                    <select class="form-control" id="project{{ ot.id }}" name="project{{ ot.id }}" style="width: 30%;">
+                                        {% for p in ot.project_task.query.all() %} {% if p.name==ot.project %}
+                                        <option value="{{ ot.name }}" selected="selected">{{ p.name }}</option>
+                                        {% else %}
+                                        <option value="{{ p.name }}">{{ p.name }}</option>
+                                        {% endif %} {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">时间节点</label>
+                                    <input class="form-control" id="timenode{{ ot.id }}" name="timenode{{ ot.id }}" type="text" value="{{ ot.timenode }}" style="width: 20%;">
+                                    <script>
+                                    $("#timenode{{ ot.id }}").datetimepicker({ format: 'yyyy-mm-dd' });
+                                    </script>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">优先级:</label>
+                                    <select class="form-control" id="priority{{ ot.id }}" name="priority{{ ot.id }}" style="width: 10%;">
+                                        <option value="1" {% if ot.priority==1 %}selected="selected" {% endif %}>1</option>
+                                        <option value="2" {% if ot.priority==2 %}selected="selected" {% endif %}>2</option>
+                                        <option value="3" {% if ot.priority==3 %}selected="selected" {% endif %}>3</option>
+                                        <option value="4" {% if ot.priority==4 %}selected="selected" {% endif %}>4</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-default" id="submit{{ ot.id }}">提交</button>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="submit" class="btn btn-primary" id="submit1{{ ot.id }}">提交</button>
+                            <script>
+                            $("#submit1{{ ot.id }}").on("click", function() {
+                                document.getElementById("submit{{ ot.id }}").click();
+                            });
+                            document.getElementById("submit{{ ot.id }}").style.display = "none"
+                            </script>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    {% endblock %}

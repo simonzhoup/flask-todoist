@@ -1,23 +1,234 @@
-{% block right %}
-<h2><p>今天 <small> 
+{% block right %} {% if overdue_tasks !=[] %}
+<div class="ot-tasks">
+    <h3><p style="color: red;">有过期的任务</p></h3>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th style="width: 60%">任务</th>
+                <th style="width: 10%">项目</th>
+                <th style="width: 10%">创建时间</th>
+                <th style="width: 10%">完成？</th>
+                <th style="width: 10%">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ot in overdue_tasks %}
+            <tr data-toggle="tooltip" data-placement="top" title="" id="task{{ ot.id }}">
+                <td>
+                    <p>
+                        <script>
+                        document.getElementById('task{{ ot.id }}').title = "时间节点: {{ ot.timenode }}";
+                        </script>
+                        {{ ot.task }}</p>
+                </td>
+                <td>
+                    <a href="#">
+                        <button type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-{{ ot.project_task.icon }}"></span> {{ ot.project }}</button>
+                    </a>
+                </td>
+                <td>
+                    <script>
+                    var timestamp = moment('{{ ot.timestamp }}').locale('zh-cn').fromNow();
+                    document.write(timestamp);
+                    </script>
+                </td>
+                <td>
+                    {% if ot.filish %}
+                    <a href="{{ url_for('main.task_unfilish',id=ot.id) }}">
+                        <button type="button" class="btn btn-success btn-xs"><span class="glyphicon glyphicon-ok"></span></button>
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('main.task_filish',id=ot.id) }}">
+                        <button type="button" class="btn btn-warning btn-xs"><span class="glyphicon glyphicon-remove"></span></button>
+                    </a>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="dropdown">
+                        <a data-toggle="dropdown" href=""><span class="glyphicon glyphicon-edit"></span></a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                            <li><a href="#edit{{ ot.id }}" data-toggle="modal">编辑任务</a></li>
+                            <li><a href="#">删除任务</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            <div class="modal fade" id="edit{{ ot.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel">添加项目</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form role="form" action="{{ url_for('main.edit_task',id=ot.id) }}" method="post">
+                                <div class="form-group">
+                                    <label for="name">名称</label>
+                                    <input type="text" class="form-control" id="task_task{{ ot.id }}" name="task_task{{ ot.id }}" value="{{ ot.task }}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">项目：</label>
+                                    <select class="form-control" id="project{{ ot.id }}" name="project{{ ot.id }}" style="width: 30%;">
+                                        {% for p in ot.project_task.query.all() %} {% if p.name==ot.project %}
+                                        <option value="{{ ot.name }}" selected="selected">{{ p.name }}</option>
+                                        {% else %}
+                                        <option value="{{ p.name }}">{{ p.name }}</option>
+                                        {% endif %} {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">时间节点</label>
+                                    <input class="form-control" id="timenode{{ ot.id }}" name="timenode{{ ot.id }}" type="text" value="{{ ot.timenode }}" style="width: 20%;">
+                                    <script>
+                                    $("#timenode{{ ot.id }}").datetimepicker({ format: 'yyyy-mm-dd' });
+                                    </script>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">优先级:</label>
+                                    <select class="form-control" id="priority{{ ot.id }}" name="priority{{ ot.id }}" style="width: 10%;">
+                                        <option value="1" {% if ot.priority==1 %}selected="selected" {% endif %}>1</option>
+                                        <option value="2" {% if ot.priority==2 %}selected="selected" {% endif %}>2</option>
+                                        <option value="3" {% if ot.priority==3 %}selected="selected" {% endif %}>3</option>
+                                        <option value="4" {% if ot.priority==4 %}selected="selected" {% endif %}>4</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-default" id="submit{{ ot.id }}">提交</button>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="submit" class="btn btn-primary" id="submit1{{ ot.id }}">提交</button>
+                            <script>
+                            $("#submit1{{ ot.id }}").on("click", function() {
+                                document.getElementById("submit{{ ot.id }}").click();
+                            });
+                            document.getElementById("submit{{ ot.id }}").style.display = "none"
+                            </script>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    {% endif %}
+    <div class="today-tasks">
+        <h2><p>今天 <small> 
   <script>
-  var time = moment('{{ today }}').locale('zh-cn').format('dddd MMMDo'); 
+  var time = moment('{{ now }}').locale('zh-cn').format('dddd MMMDo'); 
   document.write(time);
   </script>         
 </small></p></h2>
-
-<ul class="list-group">
-    <li class="list-group-item">免费域名注册</li>
-    <li class="list-group-item">免费 Window 空间托管</li>
-    <li class="list-group-item">图像的数量</li>
-    <li class="list-group-item">
-        <span class="badge">新</span>
-        24*7 支持
-    </li>
-    <li class="list-group-item">每年更新成本</li>
-    <li class="list-group-item">
-        <span class="badge">新</span>
-        折扣优惠
-    </li>
-</ul>  
-{% endblock right %}
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th style="width: 60%">任务</th>
+                    <th style="width: 10%">项目</th>
+                    <th style="width: 10%">创建时间</th>
+                    <th style="width: 10%">完成？</th>
+                    <th style="width: 10%">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in today_tasks %}
+                <tr data-toggle="tooltip" data-placement="top" title="" id="task{{ task.id }}">
+                    <td>
+                        <p>
+                            <script>
+                            document.getElementById('task{{ task.id }}').title = "时间节点: {{ task.timenode }}";
+                            </script>
+                            {{ task.task }}</p>
+                    </td>
+                    <td>
+                        <a href="#">
+                            <button type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-{{ task.project_task.icon }}"></span> {{ task.project }}</button>
+                        </a>
+                    </td>
+                    <td>
+                        <script>
+                        var timestamp = moment('{{ task.timestamp }}').locale('zh-cn').fromNow();
+                        document.write(timestamp);
+                        </script>
+                    </td>
+                    <td>
+                        {% if task.filish %}
+                        <a href="{{ url_for('main.task_unfilish',id=task.id) }}">
+                            <button type="button" class="btn btn-success btn-xs"><span class="glyphicon glyphicon-ok"></span></button>
+                        </a>
+                        {% else %}
+                        <a href="{{ url_for('main.task_filish',id=task.id) }}">
+                            <button type="button" class="btn btn-warning btn-xs"><span class="glyphicon glyphicon-remove"></span></button>
+                        </a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="dropdown">
+                            <a data-toggle="dropdown" href=""><span class="glyphicon glyphicon-edit"></span></a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                <li><a href="#edit{{ task.id }}" data-toggle="modal">编辑任务</a></li>
+                                <li><a href="#">删除任务</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                <div class="modal fade" id="edit{{ task.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">添加项目</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form role="form" action="{{ url_for('main.edit_task',id=task.id) }}" method="post">
+                                    <div class="form-group">
+                                        <label for="name">名称</label>
+                                        <input type="text" class="form-control" id="task_task{{ task.id }}" name="task_task{{ task.id }}" value="{{ task.task }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">项目：</label>
+                                        <select class="form-control" id="project{{ task.id }}" name="project{{ task.id }}" style="width: 30%;">
+                                            {% for p in task.project_task.query.all() %} {% if p.name==task.project %}
+                                            <option value="{{ p.name }}" selected="selected">{{ p.name }}</option>
+                                            {% else %}
+                                            <option value="{{ p.name }}">{{ p.name }}</option>
+                                            {% endif %} {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">时间节点</label>
+                                        <input class="form-control" id="timenode{{ task.id }}" name="timenode{{ task.id }}" type="text" value="{{ task.timenode }}" style="width: 20%;">
+                                        <script>
+                                        $("#timenode{{ task.id }}").datetimepicker({ format: 'yyyy-mm-dd' });
+                                        </script>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">优先级:</label>
+                                        <select class="form-control" id="priority{{ task.id }}" name="priority{{ task.id }}" style="width: 10%;">
+                                            <option value="1" {% if task.priority==1 %}selected="selected" {% endif %}>1</option>
+                                            <option value="2" {% if task.priority==2 %}selected="selected" {% endif %}>2</option>
+                                            <option value="3" {% if task.priority==3 %}selected="selected" {% endif %}>3</option>
+                                            <option value="4" {% if task.priority==4 %}selected="selected" {% endif %}>4</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-default" id="submit{{ task.id }}">提交</button>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                <button type="submit" class="btn btn-primary" id="submit1{{ task.id }}">提交</button>
+                                <script>
+                                $("#submit1{{ task.id }}").on("click", function() {
+                                    document.getElementById("submit{{ task.id }}").click();
+                                });
+                                document.getElementById("submit{{ task.id }}").style.display = "none"
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a data-toggle="modal" href="#add-task" style="color: red;"><span class="glyphicon glyphicon-plus"></span> 添加任务</a>
+    </div>
+    {% endblock right %}

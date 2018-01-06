@@ -1,36 +1,75 @@
-html, body {
-	height: 100%;
-	background-color: #003333;
+html,
+body {
+    height: 100%;
+    background-color: #003333;
 }
+
 a {
     color: #D8D8D8;
 }
+
 a:link {
     text-decoration: none;
     color: #D8D8D8;
 }
+
 a:hover {
     text-decoration: none;
 }
+
 p {
-	color: #fff;
+    color: #fff;
 }
+
 #register {
-	width: 400px;
-	margin-left: auto;
-	margin-right: auto;
+    width: 400px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .checkbox {
-	color: #fff;
+    color: #fff;
 }
+
+select#project {
+    width: 30%;
+}
+
 input#timenode {
-	width: 30%;
+    width: 20%;
 }
+
 select#priority {
-	width: 10%;
+    width: 10%;
+}
+
+select#title {
+    width: 20%;
+}
+
+input#new_title {
+    width: 20%;
 }
 
 .list-group-item {
-	/*background-color:rgba(0,51,51,0.2); */
+    /*background-color:rgba(0,51,51,0.2); */
+}
+
+.table>thead>tr>th {
+    color: #fff;
+    /*text-align: center;*/
+}
+
+.table-hover>tbody>tr>td {
+    color: #fff;
+    font-size: 14px;
+}
+
+.table-hover>tbody>tr:hover {
+    color: #000;
+    background-color: red;
+}
+
+.table {
+    margin-top: 20px;
 }
