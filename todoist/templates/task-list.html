@@ -1,0 +1,97 @@
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th style="width: 60%">任务</th>
+            <th style="width: 10%">项目</th>
+            <th style="width: 10%">创建时间</th>
+            <th style="width: 10%">完成？</th>
+            <th style="width: 10%">操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for t in tasks %}
+        <tr data-toggle="tooltip" data-placement="top" title="" id="task{{ t.id }}">
+            <td>
+                <p>
+                    <script>
+                    document.getElementById('task{{ t.id }}').title = "时间节点: {{ t.timenode }}";
+                    </script>
+                    {{ t.task }}</p>
+            </td>
+            <td>
+                <a href="#">
+                    <button type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-{{ t.project_task.icon }}"></span> {{ t.project }}</button>
+                </a>
+            </td>
+            <td>
+                <script>
+                var timestamp = moment('{{ t.timestamp }}').locale('zh-cn').fromNow();
+                document.write(timestamp);
+                </script>
+            </td>
+            <td>
+                {% if t.filish %}
+                <a href="{{ url_for('main.task_unfilish',id=t.id) }}">
+                    <button type="button" class="btn btn-success btn-xs"><span class="glyphicon glyphicon-ok"></span></button>
+                </a>
+                {% else %}
+                <a href="{{ url_for('main.task_filish',id=t.id) }}">
+                    <button type="button" class="btn btn-warning btn-xs"><span class="glyphicon glyphicon-remove"></span></button>
+                </a>
+                {% endif %}
+            </td>
+            <td>
+                <div class="dropdown">
+                    <a data-toggle="dropdown" href=""><span class="glyphicon glyphicon-edit"></span></a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                        <li><a href="#edit{{ t.id }}" data-toggle="modal">编辑任务</a></li>
+                        <li><a href="#">删除任务</a></li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        <div class="modal fade" id="edit{{ t.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">编辑任务</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form role="form" action="{{ url_for('main.edit_task',id=t.id) }}" method="post">
+                            {{ edit_task_form.csrf_token }}
+                            <div class="form-group">
+                                {{ edit_task_form.task.label }} {{ edit_task_form.task(id="task",class ="form-control",value=t.task)}}
+                            </div>
+                            <div class="form-group">
+                                {{ edit_task_form.project.label }} {{ edit_task_form.project(id="project",class ="form-control",option=t.project)}}
+                            </div>
+                            <div class="form-group">
+                                {{ edit_task_form.title.label }} {{ edit_task_form.title(id="title",class ="form-control",value=t.title)}}
+                            </div>
+                            <div class="form-group">
+                                {{ edit_task_form.timenode.label }} {{ edit_task_form.timenode(id="timenode"+t.id|string,class ="form-control",value=t.timenode)}}
+                            </div>
+                            <div class="form-group">
+                                {{ edit_task_form.priority.label }} {{ edit_task_form.priority(id="priority",class ="form-control",value=t.priority)}}
+                            </div>
+                            <button type="submit" class="btn btn-default" id="submit{{ t.id }}">提交</button>
+                        </form>
+                    </div>
+                    <div class="modal-foter">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="submit" class="btn btn-primary" id="ssubmit{{ t.id }}">提交</button>
+                        <script>
+                        $("#ssubmit{{ t.id }}").on("click", function() {
+                            document.getElementById("submit{{ t.id }}").click();
+                        });
+                        document.getElementById("submit{{ t.id }}").style.display = "none";
+                        $("#timenode{{t.id}}").datetimepicker({ format: 'yyyy-mm-dd' });
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </tbody>
+</table>

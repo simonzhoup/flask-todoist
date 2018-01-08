@@ -31,25 +31,7 @@ p {
     color: #fff;
 }
 
-select#project {
-    width: 30%;
-}
 
-input#timenode {
-    width: 20%;
-}
-
-select#priority {
-    width: 10%;
-}
-
-select#title {
-    width: 20%;
-}
-
-input#new_title {
-    width: 20%;
-}
 
 .list-group-item {
     /*background-color:rgba(0,51,51,0.2); */
