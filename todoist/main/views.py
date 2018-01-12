@@ -30,7 +30,8 @@ def search():
         return redirect(url_for('.index'))
     key = '%' + search.s.data + '%'
     tasks = Task.query.filter(Task.task.like(key)).all()
-    return render_template('tasks-from-project.html', tasks=tasks, key=search.s.data, search=search, edit_task_form=edit_task_form, projectform=projectform)
+    return render_template('tasks-from-project.html', tasks=tasks, key=search.s.data, search=search,
+                           edit_task_form=edit_task_form, projectform=projectform)
 
 
 @main.route('/add-task', methods=['GET', 'POST'])
@@ -64,7 +65,8 @@ def index():
         Task.timenode == datetime.now().strftime("%Y-%m-%d")).all()
     overdue_tasks = current_user.tasks.filter(and_(Task.filish == False,
                                                    Task.timenode < datetime.now().strftime("%Y-%m-%d"))).all()
-    return render_template('today.html', now=now, search=search, today_tasks=today_tasks, edit_task_form=edit_task_form, projectform=projectform, overdue_tasks=overdue_tasks)
+    return render_template('today.html', now=now, search=search, today_tasks=today_tasks, edit_task_form=edit_task_form,
+                           projectform=projectform, overdue_tasks=overdue_tasks)
 
 
 @main.route('/sevenday', methods=['GET', 'POST'])
@@ -83,7 +85,8 @@ def sevenday():
         for task in current_user.tasks.all():
             if task.timenode == day:
                 tasks7[day].append(task)
-    return render_template('seven-day.html', search=search, tasks7=tasks7, edit_task_form=edit_task_form, projectform=projectform)
+    return render_template('seven-day.html', search=search, tasks7=tasks7, edit_task_form=edit_task_form,
+                           projectform=projectform)
 
 
 @main.route('/task/filish/<int:id>')
@@ -131,7 +134,8 @@ def project(project):
     edit_task_form = AddTask()
     projectform = AddProject()
     search = Search()
-    return render_template('tasks-from-project.html', search=search, edit_task_form=edit_task_form, projectform=projectform, tasks=tasks, project=project, page_p=project)
+    return render_template('tasks-from-project.html', search=search, edit_task_form=edit_task_form,
+                           projectform=projectform, tasks=tasks, project=project, page_p=project)
 
 
 @main.route('/title')
@@ -160,4 +164,7 @@ def title(title):
     edit_task_form = AddTask()
     projectform = AddProject()
     search = Search()
-    return render_template('tasks-from-project.html', search=search, tasks=tasks, edit_task_form=edit_task_form, projectform=projectform, title=title)
+    return render_template('tasks-from-project.html', search=search, tasks=tasks, edit_task_form=edit_task_form,
+                           projectform=projectform, title=title)
+
+
