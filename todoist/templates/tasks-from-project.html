@@ -4,7 +4,7 @@
             <p style="color: red;">{% if project %}<span class="glyphicon glyphicon-file"></span>
                 {{ project }}{% elif title %}<span class="glyphicon glyphicon-pushpin"></span> {{ title }}{% elif key %}
                 <span class="glyphicon glyphicon-search"></span> {{ key }}{% endif %}
-                <small> 未完成任务</small>
+                <small> 未完成的任务</small>
             </p>
         </h3>
         {% include 'task-list.html' %}
